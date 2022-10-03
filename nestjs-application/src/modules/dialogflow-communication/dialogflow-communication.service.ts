@@ -24,10 +24,48 @@ export class DialogflowCommunicationService {
 
   async createIntent(createDialogflowIntentDto : CreateDialogflowIntentDto) {
 
-    try {
-      const responses = await this.IntentsClient.createIntent(createDialogflowIntentDto);
+    const { displayName, trainingPhrasesParts, messageTexts } = createDialogflowIntentDto;
 
-      return responses;
+    const agentPath = this.IntentsClient.projectAgentPath(googleProjectId);
+
+    const trainingPhrases = [];
+
+    trainingPhrasesParts.forEach(trainingPhrasesPart => {
+      const part = {
+        text: trainingPhrasesPart,
+      };
+
+      const trainingPhrase = {
+        type: 'EXAMPLE',
+        parts: [part],
+      };
+
+      trainingPhrases.push(trainingPhrase);
+    });
+
+    const messageText = {
+      text: messageTexts,
+    };
+
+    const message = {
+      text: messageText,
+    };
+
+    const intent = {
+      displayName: displayName,
+      trainingPhrases: trainingPhrases,
+      messages: [message],
+    };
+
+    const createIntentRequest = {
+      parent: agentPath,
+      intent: intent,
+      languageCode: 'pt-BR'
+    };
+
+    try {
+      const [response] = await this.IntentsClient.createIntent(createIntentRequest);
+      return response;
     } catch (error) {
       return error
     }
@@ -50,8 +88,8 @@ export class DialogflowCommunicationService {
     };
 
     try {
-      const responses = await this.sessionClient.detectIntent(request);
-      return responses[0];
+      const [response] = await this.sessionClient.detectIntent(request);
+      return response;
     } catch (error) {
       return error
     }

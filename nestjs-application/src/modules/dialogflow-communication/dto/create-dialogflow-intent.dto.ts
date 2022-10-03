@@ -2,19 +2,12 @@ import { google } from "@google-cloud/dialogflow/build/protos/protos";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateDialogflowIntentDto {
+  @ApiProperty()
+  displayName: string;
 
   @ApiProperty()
-  parent?: string|null;
+  trainingPhrasesParts: Array<string>
 
-  /** CreateIntentRequest intent */
   @ApiProperty()
-  intent?: any|null;
-
-  /** CreateIntentRequest languageCode */
-  @ApiProperty()
-  languageCode?: string|null;
-
-  /** CreateIntentRequest intentView */
-  @ApiProperty()
-  intentView?: any|null;
-  }
+  messageTexts: Array<string>;
+}
